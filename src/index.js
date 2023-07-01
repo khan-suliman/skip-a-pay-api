@@ -1,17 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-require("./db/mongoose");
-const adminRouter = require("./routers/admin");
-const userRouter = require("./routers/user");
+const express = require("express")
+require("./db/mongoose")
+const cors = require("cors")
+const adminRouter = require("./routers/admin")
+const userRouter = require("./routers/user")
+const loanRouter = require("./routers/loan")
 
 const app = express();
 // Apply CORS middleware
 app.use(cors());
 const port = process.env.PORT;
 
-app.use(express.json()); // parse the incoming requests with JSON payloads and is based upon the bodyparser
-app.use(adminRouter);
-app.use(userRouter);
+app.use(cors())
+app.use(express.json()) // parse the incoming requests with JSON payloads and is based upon the bodyparser
+app.use(adminRouter)
+app.use(userRouter)
+app.use(loanRouter)
 
 // listen to port
 app.listen(port, () => {
