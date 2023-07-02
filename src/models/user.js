@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const validator = require("validator")
+const Loan = require("./loan")
 
 const userSchema = new mongoose.Schema(
   {
@@ -50,7 +51,6 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true,
       required: true,
       trim: true,
       lowercase: true,
@@ -65,6 +65,41 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 )
+
+userSchema.statics.getLoanDetails = async (currentUser) => {
+  const loan = await Loan.findOne({
+    account_n: currentUser.accountNumber,
+    last_ssn_digits: currentUser.ssnNumber,
+  })
+
+  if (!loan) {
+    throw new Error("Loan not available, please try again later.")
+  }
+
+  let user = await User.findOne({
+    accountNumber: currentUser.accountNumber,
+    ssnNumber: currentUser.ssnNumber,
+  })
+
+  if (!user) {
+    user = new User(currentUser)
+    await user.save()
+  }
+
+  const userDetails = {
+    name: user.firstName,
+    email: user.email,
+    phone: user.phoneNumber,
+    accountNumber: user.accountNumber,
+    ssn: user.ssnNumber,
+    submittedDate: user.createdAt,
+    loanType: loan.loan_type,
+    loanId: loan.loan_id,
+    loanDesc: loan.Description,
+  }
+
+  return userDetails
+}
 
 const User = mongoose.model("User", userSchema)
 

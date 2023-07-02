@@ -74,13 +74,13 @@ adminSchema.statics.findByCredentials = async (email, password) => {
   const admin = await Admin.findOne({ email })
 
   if (!admin) {
-    throw new Error("Unable to login")
+    throw new Error("Credential doesn't match.")
   }
 
   const isMatch = await bcrypt.compare(password, admin.password)
 
   if (!isMatch) {
-    throw new Error("Unable to login")
+    throw new Error("Credential doesn't match.")
   }
 
   return admin
