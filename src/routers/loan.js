@@ -49,15 +49,20 @@ const readCSVFile = async (file, _id) => {
 // upload loan csv
 router.post("/loans", auth, upload.single("loan"), async (req, res) => {
   // const csvFile = req.file.buffer
-  const csvFile = req.file.path
 
-  const loans = await readCSVFile(csvFile, req.admin._id)
+  try {
+    const csvFile = req.file.path
 
-  res.status(201).send(loans)
+    const loans = await readCSVFile(csvFile, req.admin._id)
+
+    res.status(201).send(loans)
+  } catch (e) {
+    res.status(400).send(e)
+  }
 })
 
 // get all loans
-router.get("/loans", async (req, res) => {
+router.get("/loans", auth, async (req, res) => {
   const loans = await Loan.find({})
 
   if (!loans) {
