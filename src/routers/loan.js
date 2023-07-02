@@ -29,19 +29,22 @@ const readCSVFile = async (file, _id) => {
       .pipe(csv())
       .on("data", (data) => results.push({ ...data, owner: _id }))
       .on("end", async () => {
+        // add csv file data to the database
         const loan = await Loan.insertMany(results)
 
         if (!loan) {
-          console.error("Error saving loan.")
-          reject("Error saving loan.")
+          console.error("Loan not added to the database.")
+          reject("Loan not added to the database.")
         }
 
+        // delete the uploaded file after data saved to the database
         fs.unlink(file, (err) => {
           if (err) {
-            console.error("Error deleting file.")
-            reject("Error deleting file.")
+            console.error("Error deleting file.", err)
           }
         })
+
+        // return uploaded data
         resolve(loan)
       })
   })
