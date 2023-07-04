@@ -1,28 +1,28 @@
-const express = require("express")
-const Loan = require("../models/loan")
-const auth = require("../middleware/auth")
-const multer = require("multer")
-const csv = require("csv-parser")
-const fs = require("fs")
+const express = require("express");
+const Loan = require("../models/loan");
+const auth = require("../middleware/auth");
+const multer = require("multer");
+const csv = require("csv-parser");
+const fs = require("fs");
 
-const router = new express.Router()
+const router = new express.Router();
 
 const upload = multer({
   dest: "uploads",
   limits: {
-    fileSize: 1000000,
+    fileSize: 5 * 1024 * 1024,
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(csv|xlsx)$/)) {
-      return cb(new Error("please upload a csv."))
+      return cb(new Error("please upload a csv."));
     }
 
-    cb(undefined, true)
+    cb(undefined, true);
   },
-})
+});
 
 const readCSVFile = (file) => {
-  const results = []
+  const results = [];
   fs.createReadStream(file)
     .pipe(csv())
     .on("data", (data) => results.push(data))
@@ -31,9 +31,9 @@ const readCSVFile = (file) => {
       // console.log(results)
 
       try {
-        await Loan.insertMany(results)
+        await Loan.insertMany(results);
       } catch (e) {
-        console.error("Error saving loan", e)
+        console.error("Error saving loan", e);
       }
 
       // results.forEach(async (e) => {
@@ -51,30 +51,34 @@ const readCSVFile = (file) => {
 
       fs.unlink(file, (err) => {
         if (err) {
-          console.error("Error deleting file:", err)
+          console.error("Error deleting file:", err);
         }
-      })
-    })
-}
+      });
+    });
+};
 // upload loan csv
 router.post("/loans", upload.single("loan"), async (req, res) => {
-  // const csvFile = req.file.buffer
-  const csvFile = req.file.path
+  try {
+    // const csvFile = req.file.buffer
+    const csvFile = req.file.path;
 
-  const results = readCSVFile(csvFile)
+    const results = readCSVFile(csvFile);
 
-  res.send(csvFile)
-})
+    res.send(csvFile);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
 
 // get all loans
 router.get("/loans", async (req, res) => {
-  const loans = await Loan.find({})
+  const loans = await Loan.find({});
 
   if (!loans) {
-    return res.status(404).send()
+    return res.status(404).send();
   }
 
-  res.send(loans)
-})
+  res.send(loans);
+});
 
-module.exports = router
+module.exports = router;
