@@ -1,7 +1,7 @@
-const mongoose = require("mongoose")
-const validator = require("validator")
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const adminSchema = new mongoose.Schema(
   {
@@ -18,7 +18,7 @@ const adminSchema = new mongoose.Schema(
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
-          throw new Error("Email is invalid!")
+          throw new Error("Email is invalid!");
         }
       },
     },
@@ -29,7 +29,7 @@ const adminSchema = new mongoose.Schema(
       trim: true,
       validate(value) {
         if (value.toLowerCase().includes("password")) {
-          throw new Error("Password cannot contain 'password'")
+          throw new Error("Password cannot contain 'password'");
         }
       },
     },
@@ -45,61 +45,61 @@ const adminSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-)
+);
 
 adminSchema.methods.toJSON = function () {
-  const admin = this
+  const admin = this;
 
-  const adminObject = admin.toObject()
+  const adminObject = admin.toObject();
 
-  delete adminObject.password
-  delete adminObject.tokens
+  delete adminObject.password;
+  delete adminObject.tokens;
 
-  return adminObject
-}
+  return adminObject;
+};
 
 // generate auth token for user
 adminSchema.methods.generateAuthToken = async function () {
-  const admin = this
-  const token = jwt.sign({ _id: admin._id.toString() }, process.env.JWT_SECRET)
+  const admin = this;
+  const token = jwt.sign({ _id: admin._id.toString() }, process.env.JWT_SECRET);
 
-  admin.tokens = admin.tokens.concat({ token })
-  await admin.save()
+  admin.tokens = admin.tokens.concat({ token });
+  await admin.save();
 
-  return token
-}
+  return token;
+};
 
 // our own method for login the users
 adminSchema.statics.findByCredentials = async (email, password) => {
-  const admin = await Admin.findOne({ email })
+  const admin = await Admin.findOne({ email });
 
   if (!admin) {
-    throw new Error("Credential doesn't match.")
+    throw new Error("Credential doesn't match.");
   }
 
-  const isMatch = await bcrypt.compare(password, admin.password)
+  const isMatch = await bcrypt.compare(password, admin.password);
 
   if (!isMatch) {
-    throw new Error("Credential doesn't match.")
+    throw new Error("Credential doesn't match.");
   }
 
-  return admin
-}
+  return admin;
+};
 
 // hash the plain text password before saving
 // run before 'save()' method
 adminSchema.pre("save", async function (next) {
-  const admin = this
+  const admin = this;
 
   if (admin.isModified("password")) {
     // run only if new user created or password field changed
-    admin.password = await bcrypt.hash(admin.password, 8)
+    admin.password = await bcrypt.hash(admin.password, 8);
   }
 
   //run save
-  next()
-})
+  next();
+});
 
-const Admin = mongoose.model("Admin", adminSchema)
+const Admin = mongoose.model("Admin", adminSchema);
 
-module.exports = Admin
+module.exports = Admin;
