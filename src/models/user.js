@@ -60,6 +60,11 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    loan: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Loan",
+    },
   },
   {
     timestamps: true,
@@ -67,7 +72,7 @@ const userSchema = new mongoose.Schema(
 )
 
 userSchema.statics.getLoanDetails = async (currentUser) => {
-  const loan = await Loan.findOne({
+  const loan = await Loan.find({
     account_n: currentUser.accountNumber,
     last_ssn_digits: currentUser.ssnNumber,
   })
@@ -81,24 +86,25 @@ userSchema.statics.getLoanDetails = async (currentUser) => {
     ssnNumber: currentUser.ssnNumber,
   })
 
-  if (!user) {
-    user = new User(currentUser)
-    await user.save()
+  // populate and return
+  if (user) {
+    await user.populate("loan")
+    return user
   }
 
-  const userDetails = {
-    name: user.firstName,
-    email: user.email,
-    phone: user.phoneNumber,
-    accountNumber: user.accountNumber,
-    ssn: user.ssnNumber,
-    submittedDate: user.createdAt,
-    loanType: loan.loan_type,
-    loanId: loan.loan_id,
-    loanDesc: loan.Description,
-  }
+  // const userDetails = {
+  //   name: user.firstName,
+  //   email: user.email,
+  //   phone: user.phoneNumber,
+  //   accountNumber: user.accountNumber,
+  //   ssn: user.ssnNumber,
+  //   submittedDate: user.createdAt,
+  //   loanType: loan.loan_type,
+  //   loanId: loan.loan_id,
+  //   loanDesc: loan.Description,
+  // }
 
-  return userDetails
+  return loan
 }
 
 const User = mongoose.model("User", userSchema)
