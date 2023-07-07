@@ -4,6 +4,7 @@ const auth = require("../middleware/auth");
 const multer = require("multer");
 const csv = require("csv-parser");
 const fs = require("fs");
+const { resolve } = require("path");
 
 const router = new express.Router();
 
@@ -21,57 +22,62 @@ const upload = multer({
   },
 });
 
-const readCSVFile = (file) => {
+const readCSVFile = async (file, _id) => {
   const results = [];
-  fs.createReadStream(file)
-    .pipe(csv())
-    .on("data", (data) => results.push(data))
-    .on("end", async () => {
-      // console.log(results.length)
-      // console.log(results)
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(file)
+      .pipe(csv())
+      .on("data", (data) => results.push({ ...data, owner: _id }))
+      .on("end", async () => {
+        try {
+          // add csv file data to the database
+          const loan = await Loan.insertMany(results);
 
-      try {
-        await Loan.insertMany(results);
-      } catch (e) {
-        console.error("Error saving loan", e);
-      }
+          if (!loan) {
+            console.error("Loan not added to the database.");
+            reject("Loan not added to the database.");
+          }
 
-      // results.forEach(async (e) => {
-      //   console.log("e", e.name)
+          // delete the uploaded file after data saved to the database
+          fs.unlink(file, (err) => {
+            if (err) {
+              console.error("Error deleting file.", err);
+            }
+          });
 
-      //   const loan = new Loan(e)
-      //   try {
-      //     await loan.save()
-      //   } catch (e) {
-      //     console.error("Error saving loan", e)
-      //   }
-      // })
-
-      // const loan = new Loan.insertMany(results)
-
-      fs.unlink(file, (err) => {
-        if (err) {
-          console.error("Error deleting file:", err);
+          // return uploaded data
+          resolve(loan);
+        } catch (error) {
+          reject(error);
         }
       });
-    });
+  });
 };
 // upload loan csv
-router.post("/loans", upload.single("loan"), async (req, res) => {
+router.post("/loans", auth, upload.single("loan"), async (req, res) => {
+  // const csvFile = req.file.buffer
+
   try {
-    // const csvFile = req.file.buffer
     const csvFile = req.file.path;
 
-    const results = readCSVFile(csvFile);
+    const loans = await readCSVFile(csvFile, req.admin._id);
 
-    res.send(csvFile);
-  } catch (error) {
-    res.status(500).send({ error: error.message });
+    res.status(201).send(loans);
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      return res
+        .status(400)
+        .json({
+          error:
+            "The file field does not match the required format or contains missing values.",
+        });
+    }
+    res.status(400).send({ error: err.message });
   }
 });
 
 // get all loans
-router.get("/loans", async (req, res) => {
+router.get("/loans", auth, async (req, res) => {
   const loans = await Loan.find({});
 
   if (!loans) {
