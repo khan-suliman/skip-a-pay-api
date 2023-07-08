@@ -77,7 +77,7 @@ userSchema.statics.getLoanDetails = async (currentUser) => {
     last_ssn_digits: currentUser.ssnNumber,
   })
 
-  if (!loan) {
+  if (!loan || !loan.length) {
     throw new Error("Loan not available, please try again later.")
   }
 
