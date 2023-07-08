@@ -76,25 +76,7 @@ router.post("/loans", auth, upload.single("loan"), async (req, res) => {
 
 // get all loans
 router.get("/loans", auth, async (req, res) => {
-  let days = req.query.days
-  let query = {}
-
-  if (days) {
-    console.log("days: ", days)
-
-    // Get the current date
-    const currentDate = new Date()
-
-    // Calculate the date n days ago
-    const nDaysAgo = new Date()
-    nDaysAgo.setDate(currentDate.getDate() - days)
-
-    // Construct the query for the last n days
-    query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } }
-  }
-
-  // Execute the query
-  const loans = await Loan.find(query)
+  const loans = await Loan.find({})
 
   if (!loans) {
     return res.status(404).send()
@@ -102,34 +84,5 @@ router.get("/loans", auth, async (req, res) => {
 
   res.send(loans)
 })
-
-// // get all loans by days
-// router.get("/loans/days", auth, async (req, res) => {
-//   let days = req.query.days
-//   let query = {}
-
-//   if (days) {
-//     console.log("days: ", days)
-
-//     // Get the current date
-//     const currentDate = new Date()
-
-//     // Calculate the date n days ago
-//     const nDaysAgo = new Date()
-//     nDaysAgo.setDate(currentDate.getDate() - days)
-
-//     // Construct the query for the last n days
-//     query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } }
-//   }
-
-//   // Execute the query
-//   const loans = await Loan.find(query)
-
-//   if (!loans) {
-//     return res.status(404).send()
-//   }
-
-//   res.send({ loans, length: loans.length, days })
-// })
 
 module.exports = router
