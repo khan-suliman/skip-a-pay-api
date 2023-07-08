@@ -32,7 +32,21 @@ router.post("/users", async (req, res) => {
 
 // get all users, only for admins
 router.get("/users", auth, async (req, res) => {
-  const users = await User.find({});
+  let days = req.query.days;
+  let query = {};
+
+  if (days) {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Calculate the date n days ago
+    const nDaysAgo = new Date();
+    nDaysAgo.setDate(currentDate.getDate() - days);
+
+    // Construct the query for the last n days
+    query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } };
+  }
+  const users = await User.find(query);
 
   if (!users) {
     return req.status(404).send();
