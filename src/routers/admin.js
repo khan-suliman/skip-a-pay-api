@@ -3,6 +3,11 @@ const Admin = require("../models/admin")
 const auth = require("../middleware/auth")
 const router = new express.Router()
 
+// root for testing app
+router.get("/", async (req, res) => {
+  res.send("App is running...")
+})
+
 // create admin
 router.post("/admins", async (req, res) => {
   const admin = new Admin(req.body)
