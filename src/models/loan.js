@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const loanSchema = new mongoose.Schema(
   {
@@ -37,8 +37,8 @@ const loanSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-)
+);
 
-const Loan = mongoose.model("Loan", loanSchema)
+const Loan = mongoose.model("Loan", loanSchema);
 
-module.exports = Loan
+module.exports = Loan;
