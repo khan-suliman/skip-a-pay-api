@@ -69,9 +69,10 @@ router.post("/loans", auth, upload.single("loan"), async (req, res) => {
     }
     // const loans = await readCSVFile(csvFile)
 
-    const loans = await readCSVFile(csvFile, req.admin._id)
+    // const loans = await readCSVFile(csvFile, req.admin._id)
+    await readCSVFile(csvFile, req.admin._id)
 
-    res.status(201).send(loans)
+    res.status(201).send()
   } catch (err) {
     if (err.name === "ValidationError") {
       return res.status(400).json({
@@ -151,7 +152,12 @@ router.post("/loans", auth, upload.single("loan"), async (req, res) => {
 
 // get all loans
 router.get("/loans", auth, async (req, res) => {
-  const loans = await Loan.find({}).populate("owner")
+  const pageLimit = req.query.limit // Number of documents per page
+  const pageNumber = req.query.skip // Current page number
+  const loans = await Loan.find({})
+    .populate("owner")
+    .limit(pageLimit)
+    .skip(pageNumber)
 
   if (!loans) {
     return res.status(404).send()
