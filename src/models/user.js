@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.statics.getLoanDetails = async (currentUser) => {
   const loan = await Loan.find({
-    account_n: currentUser.accountNumber,
+    account_number: currentUser.accountNumber,
     last_ssn_digits: currentUser.ssnNumber,
   })
 
