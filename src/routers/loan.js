@@ -154,16 +154,25 @@ router.post("/loans", auth, upload.single("loan"), async (req, res) => {
 router.get("/loans", auth, async (req, res) => {
   const pageLimit = req.query.limit // Number of documents per page
   const pageNumber = req.query.skip // Current page number
+  let pageSkip = 1
+
+  if (pageNumber > 0 && pageLimit > 0) {
+    pageSkip = pageLimit * (pageNumber - 1)
+  }
+
+  // count total number of docs
+  const countDocs = await Loan.countDocuments({})
+
   const loans = await Loan.find({})
     .populate("owner")
     .limit(pageLimit)
-    .skip(pageNumber)
+    .skip(pageSkip)
 
   if (!loans) {
     return res.status(404).send()
   }
 
-  res.send(loans)
+  res.send({ loans, count: countDocs })
 })
 
 module.exports = router

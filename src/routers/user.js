@@ -34,6 +34,11 @@ router.post("/users", async (req, res) => {
 router.get("/users", auth, async (req, res) => {
   const pageLimit = req.query.limit // Number of documents per page
   const pageNumber = req.query.skip // Current page number
+  let pageSkip = 1
+
+  if (pageNumber > 0 && pageLimit > 0) {
+    pageSkip = pageLimit * (pageNumber - 1)
+  }
 
   let days = req.query.days
   let query = {}
@@ -49,13 +54,16 @@ router.get("/users", auth, async (req, res) => {
     // Construct the query for the last n days
     query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } }
   }
-  const users = await User.find(query).limit(pageLimit).skip(pageNumber)
+  // count total number of docs
+  const countDocs = await User.countDocuments({})
+
+  const users = await User.find(query).limit(pageLimit).skip(pageSkip)
 
   if (!users) {
     return req.status(404).send()
   }
 
-  res.send(users)
+  res.send({ users, count: countDocs })
 })
 
 module.exports = router
