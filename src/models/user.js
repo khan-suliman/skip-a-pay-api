@@ -1,6 +1,8 @@
 const mongoose = require("mongoose")
 const validator = require("validator")
 const Loan = require("./loan")
+const csv = require("csv-writer").createObjectCsvStringifier
+const moment = require("moment")
 
 const userSchema = new mongoose.Schema(
   {
@@ -71,6 +73,7 @@ const userSchema = new mongoose.Schema(
   }
 )
 
+// get loan details for user
 userSchema.statics.getLoanDetails = async (currentUser) => {
   const loan = await Loan.find({
     account_number: currentUser.accountNumber,
@@ -105,6 +108,58 @@ userSchema.statics.getLoanDetails = async (currentUser) => {
   // }
 
   return loan
+}
+
+// make csv file and return
+userSchema.statics.makeCsv = async (days) => {
+  let query = {}
+
+  if (days) {
+    // Get the current date
+    const currentDate = new Date()
+
+    // Calculate the date n days ago
+    const nDaysAgo = new Date()
+    nDaysAgo.setDate(currentDate.getDate() - days)
+
+    // Construct the query for the last n days
+    query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } }
+  }
+
+  const users = await User.find(query).populate("loan")
+
+  if (!users) {
+    throw new Error("Users not found.")
+  }
+
+  // format data for CSV downloadable file
+  const csvJsonData = users.map(({ _id, loan, email, createdAt }) => ({
+    ID: _id,
+    Name: loan.name,
+    Email: email,
+    "Account Number": loan.account_number,
+    "Loan ID": loan.loan_id,
+    "Submitted Date": moment(createdAt).format("MMMM Do, YYYY, h:mm a"),
+  }))
+
+  // set headers for CSV
+  const csvStringifier = csv({
+    header: [
+      { id: "ID", title: "ID" },
+      { id: "Name", title: "Name" },
+      { id: "Email", title: "Email" },
+      { id: "Account Number", title: "Account Number" },
+      { id: "Loan ID", title: "Loan ID" },
+      { id: "Submitted Date", title: "Submitted Date" },
+      // Add more headers as needed
+    ],
+  })
+
+  const csvData =
+    csvStringifier.getHeaderString() +
+    csvStringifier.stringifyRecords(csvJsonData)
+
+  return csvData
 }
 
 const User = mongoose.model("User", userSchema)

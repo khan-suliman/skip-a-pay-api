@@ -23,8 +23,7 @@ router.post("/users", async (req, res) => {
 
   try {
     await user.save()
-
-    res.status(201).send({ user })
+    res.status(201).send(user)
   } catch (e) {
     res.status(400).send(e)
   }
@@ -57,13 +56,31 @@ router.get("/users", auth, async (req, res) => {
   // count total number of docs
   const countDocs = await User.countDocuments({})
 
-  const users = await User.find(query).limit(pageLimit).skip(pageSkip)
+  const users = await User.find(query)
+    .limit(pageLimit)
+    .skip(pageSkip)
+    .populate("loan")
 
   if (!users) {
     return req.status(404).send()
   }
 
   res.send({ users, count: countDocs })
+})
+
+// donwload users, only for admins
+router.get("/users/download", async (req, res) => {
+  try {
+    const csv = await User.makeCsv(req.query.days)
+
+    res.setHeader("Content-Type", "text/csv")
+    res.setHeader("Content-Disposition", "attachment; filename=data.csv")
+
+    // send csv file
+    res.send(csv)
+  } catch (e) {
+    res.status(404).send({ error: e.message })
+  }
 })
 
 module.exports = router
