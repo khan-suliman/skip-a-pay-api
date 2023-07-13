@@ -83,4 +83,24 @@ router.get("/users/download", async (req, res) => {
   }
 })
 
+// delete the user, only for admins
+router.delete("/users/:id", auth, async (req, res) => {
+  try {
+    const user = await User.deleteOne({ _id: req.params.id })
+    res.status(202).send(user)
+  } catch (e) {
+    res.status(500).send(e)
+  }
+})
+
+// delete all users, only for admins
+router.delete("/users", auth, async (req, res) => {
+  try {
+    const user = await User.deleteMany({})
+    res.status(202).send(user)
+  } catch (e) {
+    res.status(500).send(e)
+  }
+})
+
 module.exports = router
