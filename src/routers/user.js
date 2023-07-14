@@ -19,9 +19,10 @@ router.post("/users/loan", async (req, res) => {
 
 // create loan
 router.post("/users", async (req, res) => {
-  const user = new User(req.body)
-
   try {
+    await User.getLoanDetails(req.body)
+
+    const user = new User(req.body)
     await user.save()
     res.status(201).send(user)
   } catch (e) {
