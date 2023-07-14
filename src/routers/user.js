@@ -20,13 +20,17 @@ router.post("/users/loan", async (req, res) => {
 // create loan
 router.post("/users", async (req, res) => {
   try {
-    await User.getLoanDetails(req.body)
+    const loan = await User.getLoanDetails(req.body)
+
+    if (loan.loan) {
+      throw new Error("Already Applied.")
+    }
 
     const user = new User(req.body)
     await user.save()
     res.status(201).send(user)
   } catch (e) {
-    res.status(400).send(e)
+    res.status(400).send({ error: e.message })
   }
 })
 
