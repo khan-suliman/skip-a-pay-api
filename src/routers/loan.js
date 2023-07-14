@@ -175,4 +175,24 @@ router.get("/loans", auth, async (req, res) => {
   res.send({ loans, count: countDocs })
 })
 
+// delete the user, only for admins
+router.delete("/loans/:id", auth, async (req, res) => {
+  try {
+    const loan = await Loan.deleteOne({ _id: req.params.id })
+    res.status(202).send(loan)
+  } catch (e) {
+    res.status(500).send(e)
+  }
+})
+
+// delete all users, only for admins
+router.delete("/loans", auth, async (req, res) => {
+  try {
+    const loan = await Loan.deleteMany({})
+    res.status(202).send(loan)
+  } catch (e) {
+    res.status(500).send(e)
+  }
+})
+
 module.exports = router
