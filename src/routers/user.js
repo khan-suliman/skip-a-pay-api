@@ -7,7 +7,6 @@ const router = new express.Router()
 
 // get loan details
 router.post("/users/loan", async (req, res) => {
-
   try {
     const user = await User.getLoanDetails(req.body)
     res.status(200).send(user)
@@ -97,15 +96,6 @@ router.delete("/users/:id", auth, async (req, res) => {
     res.status(500).send(e)
   }
 })
-// delete the loan, only for admins
-router.delete("/loans/:id", auth, async (req, res) => {
-  try {
-    const loan = await Loan.deleteOne({ _id: req.params.id })
-    res.status(202).send(loan)
-  } catch (e) {
-    res.status(500).send({ error: e.message })
-  }
-})
 
 // delete all users, only for admins
 router.delete("/users", auth, async (req, res) => {
@@ -114,15 +104,6 @@ router.delete("/users", auth, async (req, res) => {
     res.status(202).send(user)
   } catch (e) {
     res.status(500).send(e)
-  }
-})
-// delete all loans, only for admins
-router.delete("/loans", auth, async (req, res) => {
-  try {
-    const loan = await Loan.deleteMany({})
-    res.status(202).send(loan)
-  } catch (e) {
-    res.status(500).send({ error: e.message })
   }
 })
 
