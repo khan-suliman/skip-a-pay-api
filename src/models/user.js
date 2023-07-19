@@ -129,7 +129,7 @@ userSchema.statics.getLoanDetails = async (currentUser) => {
 
 // make csv file and return
 userSchema.statics.makeCsv = async (days) => {
-  let query = filterByDays(days)
+  let query = User.filterByDays(days)
 
   const users = await User.find(query).populate("loan")
 
