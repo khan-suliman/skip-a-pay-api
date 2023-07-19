@@ -35,6 +35,26 @@ router.post("/users", async (req, res) => {
 
 // get all users, only for admins
 router.get("/users", auth, async (req, res) => {
+  let days = req.query.days
+  let count = req.query.count
+
+  // send count by last n number of days
+  if (count && days) {
+    let query = User.filterByDays(days)
+    // count total number of docs
+    const daysCount = await User.countDocuments(query)
+    const countDocs = await User.countDocuments({})
+
+    return res.send({ count: countDocs, daysCount })
+  }
+
+  // send count only
+  if (count) {
+    // count total number of docs
+    const countDocs = await User.countDocuments({})
+    return res.send({ count: countDocs })
+  }
+
   const pageLimit = req.query.limit // Number of documents per page
   const pageNumber = req.query.skip // Current page number
   let pageSkip = 0
@@ -43,22 +63,11 @@ router.get("/users", auth, async (req, res) => {
     pageSkip = pageLimit * (pageNumber - 1)
   }
 
-  let days = req.query.days
-  let query = {}
+  let query = User.filterByDays(days)
 
-  if (days) {
-    // Get the current date
-    const currentDate = new Date()
-
-    // Calculate the date n days ago
-    const nDaysAgo = new Date()
-    nDaysAgo.setDate(currentDate.getDate() - days)
-
-    // Construct the query for the last n days
-    query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } }
-  }
   // count total number of docs
   const countDocs = await User.countDocuments({})
+  const daysCount = await User.countDocuments(query)
 
   const users = await User.find(query)
     .limit(pageLimit)
@@ -66,10 +75,10 @@ router.get("/users", auth, async (req, res) => {
     .populate("loan")
 
   if (!users) {
-    return req.status(404).send()
+    return res.status(404).send()
   }
 
-  res.send({ users, count: countDocs })
+  res.send({ users, count: countDocs, daysCount })
 })
 
 // donwload users, only for admins

@@ -152,6 +152,13 @@ router.post("/loans", auth, upload.single("loan"), async (req, res) => {
 
 // get all loans
 router.get("/loans", auth, async (req, res) => {
+  // count total number of docs
+  const countDocs = await Loan.countDocuments({})
+
+  if (req.query.count) {
+    return res.send({ count: countDocs })
+  }
+
   const pageLimit = req.query.limit // Number of documents per page
   const pageNumber = req.query.skip // Current page number
   let pageSkip = 0
@@ -159,9 +166,6 @@ router.get("/loans", auth, async (req, res) => {
   if (pageNumber > 0 && pageLimit > 0) {
     pageSkip = pageLimit * (pageNumber - 1)
   }
-
-  // count total number of docs
-  const countDocs = await Loan.countDocuments({})
 
   const loans = await Loan.find({})
     .populate("owner")

@@ -73,6 +73,23 @@ const userSchema = new mongoose.Schema(
   }
 )
 
+userSchema.statics.filterByDays = (days) => {
+  if (!days) {
+    return {}
+  }
+  // Get the current date
+  const currentDate = new Date()
+
+  // Calculate the date n days ago
+  const nDaysAgo = new Date()
+  nDaysAgo.setDate(currentDate.getDate() - days)
+
+  // Construct the query for the last n days
+  let query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } }
+
+  return query
+}
+
 // get loan details for user
 userSchema.statics.getLoanDetails = async (currentUser) => {
   const loan = await Loan.find({
@@ -112,19 +129,7 @@ userSchema.statics.getLoanDetails = async (currentUser) => {
 
 // make csv file and return
 userSchema.statics.makeCsv = async (days) => {
-  let query = {}
-
-  if (days) {
-    // Get the current date
-    const currentDate = new Date()
-
-    // Calculate the date n days ago
-    const nDaysAgo = new Date()
-    nDaysAgo.setDate(currentDate.getDate() - days)
-
-    // Construct the query for the last n days
-    query = { createdAt: { $gte: nDaysAgo, $lte: currentDate } }
-  }
+  let query = filterByDays(days)
 
   const users = await User.find(query).populate("loan")
 
