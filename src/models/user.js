@@ -144,6 +144,7 @@ userSchema.statics.makeCsv = async (days) => {
     Email: email,
     "Account Number": loan.account_number,
     "Loan ID": loan.loan_id,
+    "Last SSN Digits": loan.last_ssn_digits,
     "Submitted Date": moment(createdAt).format("MMMM Do, YYYY, h:mm a"),
   }))
 
