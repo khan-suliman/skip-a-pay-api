@@ -156,6 +156,7 @@ userSchema.statics.makeCsv = async (days) => {
       { id: "Email", title: "Email" },
       { id: "Account Number", title: "Account Number" },
       { id: "Loan ID", title: "Loan ID" },
+      { id: "Last SSN Digits", title: "Last SSN Digits" },
       { id: "Submitted Date", title: "Submitted Date" },
       // Add more headers as needed
     ],

@@ -82,7 +82,7 @@ router.get("/users", auth, async (req, res) => {
 })
 
 // donwload users, only for admins
-router.get("/users/download", async (req, res) => {
+router.get("/users/download", auth, async (req, res) => {
   try {
     const csv = await User.makeCsv(req.query.days)
 
