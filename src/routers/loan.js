@@ -161,13 +161,34 @@ router.get("/loans", auth, async (req, res) => {
 
   const pageLimit = req.query.limit // Number of documents per page
   const pageNumber = req.query.skip // Current page number
+  let search = req.query.search
   let pageSkip = 0
 
   if (pageNumber > 0 && pageLimit > 0) {
     pageSkip = pageLimit * (pageNumber - 1)
   }
 
-  const loans = await Loan.find({})
+  let query = {}
+
+  if (search) {
+    // Search for documents where field is equal to (number) or (string) or any other type or field
+    const regexNum = /^[1-9]\d*$/
+    const regexStr = /^[A-Za-z\s]+$/
+
+    // Create a regular expression with the 'i' flag for case-insensitive search
+    const searchRegex = new RegExp(search, "i")
+    query = {
+      $or: [
+        { account_number: regexNum.test(search) ? search : null },
+        { loan_id: regexNum.test(search) ? search : null },
+        { name: regexStr.test(search) ? searchRegex : null },
+      ],
+    }
+  }
+
+  const totalFound = await Loan.countDocuments(query)
+
+  const loans = await Loan.find(query)
     .populate("owner")
     .limit(pageLimit)
     .skip(pageSkip)
@@ -176,7 +197,7 @@ router.get("/loans", auth, async (req, res) => {
     return res.status(404).send()
   }
 
-  res.send({ loans, count: countDocs })
+  res.send({ loans, count: countDocs, totalFound })
 })
 
 // delete the user, only for admins

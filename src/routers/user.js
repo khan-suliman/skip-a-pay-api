@@ -71,7 +71,7 @@ router.get("/users", auth, async (req, res) => {
   if (search) {
     // Search for documents where field is equal to (number) or (string) or any other type or field
     const regexNum = /^[1-9]\d*$/
-    const regexStr = /^[A-Za-z]+$/
+    const regexStr = /^[A-Za-z\s]+$/
     const regexEmail = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/
 
     // Create a regular expression with the 'i' flag for case-insensitive search
