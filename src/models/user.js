@@ -112,18 +112,6 @@ userSchema.statics.getLoanDetails = async (currentUser) => {
     return user
   }
 
-  // const userDetails = {
-  //   name: user.firstName,
-  //   email: user.email,
-  //   phone: user.phoneNumber,
-  //   accountNumber: user.accountNumber,
-  //   ssn: user.ssnNumber,
-  //   submittedDate: user.createdAt,
-  //   loanType: loan.loan_type,
-  //   loanId: loan.loan_id,
-  //   loanDesc: loan.Description,
-  // }
-
   return loan
 }
 
