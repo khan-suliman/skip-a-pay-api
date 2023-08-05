@@ -62,11 +62,13 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    loan: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "Loan",
-    },
+    loan: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Loan",
+      },
+    ],
   },
   {
     timestamps: true,

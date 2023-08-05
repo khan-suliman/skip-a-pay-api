@@ -1,7 +1,6 @@
 const express = require("express")
 const User = require("../models/user")
 const auth = require("../middleware/auth")
-const Loan = require("../models/loan")
 
 const router = new express.Router()
 
@@ -26,6 +25,25 @@ router.post("/users", async (req, res) => {
     }
 
     const user = new User(req.body)
+    await user.save()
+    res.status(201).send(user)
+  } catch (e) {
+    res.status(400).send({ error: e.message })
+  }
+})
+
+// update loan
+router.patch("/users", async (req, res) => {
+  try {
+    await User.getLoanDetails(req.body)
+
+    let user = await User.findOne({
+      accountNumber: req.body.accountNumber,
+      ssnNumber: req.body.ssnNumber,
+    })
+
+    // update loan only
+    user.loan = req.body.loan
     await user.save()
     res.status(201).send(user)
   } catch (e) {
