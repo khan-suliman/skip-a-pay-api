@@ -130,13 +130,31 @@ userSchema.statics.makeCsv = async (days) => {
   // format data for CSV downloadable file
   const csvJsonData = users.map(({ _id, loan, email, createdAt }) => ({
     ID: _id,
-    Name: loan.name,
+    Name: loan[0].name,
     Email: email,
-    "Account Number": loan.account_number,
-    "Loan ID": loan.loan_id,
-    "Last SSN Digits": loan.last_ssn_digits,
+    "Account Number": loan[0].account_number,
+    // "Loan ID": loan.loan_id,
+    "Loan ID": extractLoans(loan),
+    // "Last SSN Digits": loan.last_ssn_digits,
     "Submitted Date": moment(createdAt).format("MMMM Do, YYYY, h:mm a"),
   }))
+
+  // get all loans of a user
+  function extractLoans(loans) {
+    let allLoans = ""
+    for (let i = 0; i < loans.length; i++) {
+      if (i == 0) {
+        allLoans = loans[i].loan_id
+      } else {
+        allLoans = `${allLoans}, ${loans[i].loan_id}`
+      }
+    }
+    // loans.forEach((loan) => {
+    //   allLoans = `${allLoans}, ${loan.loan_id}`
+    // })
+
+    return allLoans
+  }
 
   // set headers for CSV
   const csvStringifier = csv({
@@ -146,7 +164,7 @@ userSchema.statics.makeCsv = async (days) => {
       { id: "Email", title: "Email" },
       { id: "Account Number", title: "Account Number" },
       { id: "Loan ID", title: "Loan ID" },
-      { id: "Last SSN Digits", title: "Last SSN Digits" },
+      // { id: "Last SSN Digits", title: "Last SSN Digits" },
       { id: "Submitted Date", title: "Submitted Date" },
       // Add more headers as needed
     ],
