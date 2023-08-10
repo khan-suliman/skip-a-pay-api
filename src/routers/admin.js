@@ -2,6 +2,7 @@ const express = require("express")
 const Admin = require("../models/admin")
 const auth = require("../middleware/auth")
 const router = new express.Router()
+const bcrypt = require("bcryptjs")
 
 // root for testing app
 router.get("/", async (req, res) => {
@@ -57,7 +58,6 @@ router.post("/admins/logout", auth, async (req, res) => {
 
 // logout admin from all devices
 router.post("/admins/logoutAll", auth, async (req, res) => {
-  console.log(req.admin)
   try {
     req.admin.tokens = []
 
@@ -66,6 +66,24 @@ router.post("/admins/logoutAll", auth, async (req, res) => {
     res.send()
   } catch (e) {
     res.status(500).send()
+  }
+})
+
+// reset password
+router.post("/admins/changepassword", auth, async (req, res) => {
+  try {
+    const { password, oldPassword, newpassword } = req.body
+    // console.log('data', req.admin)
+    const isMatch = await bcrypt.compare(oldPassword, req.admin.password)
+    if (isMatch) {
+      const hashedPassword = await bcrypt.hash(req.admin.password, 8)
+      req.admin.password = hashedPassword
+      req.admin.save()
+      return res.status(201).send(req.admin);
+    }
+    return res.status(400).send({ error: `Your password doesn't match to the old one` });
+  } catch (err) {
+    return res.status(400).send({ error: err.message })
   }
 })
 
