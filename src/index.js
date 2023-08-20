@@ -1,13 +1,13 @@
 const app = require("./app")
-const env = require("./config/env")
+const functions = require("firebase-functions")
+const env = require("../src/config/env")
 
-const port = env.PORT
+// const port = env.PORT
 
-if (port) {
-  // listen to port
-  app.listen(port, () => {
-    console.log("Server is up on port " + port)
-  })
-} else {
-  console.log("Port not availble")
-}
+// // listen to port
+// app.listen(port, () => {
+//   console.log("Server is up on port " + port)
+// })
+
+// api function for firebase
+exports.api = functions.https.onRequest(app)
