@@ -73,6 +73,9 @@ router.post("/admins/logoutAll", auth, async (req, res) => {
 router.post("/admins/changepassword", auth, async (req, res) => {
   try {
     const { password, oldPassword } = req.body
+    if (!password || password.length < 7) {
+      throw new Error("Password must be greater than 6 characters.")
+    }
     // console.log('data', req.admin)
     const isMatch = await bcrypt.compare(oldPassword, req.admin.password)
     if (isMatch) {

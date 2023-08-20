@@ -9,7 +9,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions:api",
     "logs": "firebase functions:log",
-    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js"
+    "dev": "env-cmd -f ./config/dev.env nodemon src/dev.js"
   },
   "keywords": [],
   "author": "",

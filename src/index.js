@@ -1,6 +1,6 @@
 const app = require("./app")
 const functions = require("firebase-functions")
-const env = require("../src/config/env")
+// const env = require("../src/config/env")
 
 // const port = env.PORT
 
