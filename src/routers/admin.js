@@ -72,16 +72,17 @@ router.post("/admins/logoutAll", auth, async (req, res) => {
 // reset password
 router.post("/admins/changepassword", auth, async (req, res) => {
   try {
-    const { password, oldPassword, newpassword } = req.body
+    const { password, oldPassword } = req.body
     // console.log('data', req.admin)
     const isMatch = await bcrypt.compare(oldPassword, req.admin.password)
     if (isMatch) {
-      const hashedPassword = await bcrypt.hash(req.admin.password, 8)
-      req.admin.password = hashedPassword
+      req.admin.password = password
       req.admin.save()
-      return res.status(201).send(req.admin);
+      return res.status(201).send(req.admin)
     }
-    return res.status(400).send({ error: `Your password doesn't match to the old one` });
+    return res
+      .status(400)
+      .send({ error: `Your password doesn't match to the old one` })
   } catch (err) {
     return res.status(400).send({ error: err.message })
   }
