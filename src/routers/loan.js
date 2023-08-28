@@ -35,12 +35,22 @@ const readCSVFile = async (file, _id) => {
     readableStream
       .pipe(csv())
       .on("data", (data) => {
-        results.push({ ...data, owner: _id })
+        // console.log(data)
+        const newData = {
+          name: data.name.trim(),
+          account_number: data.account_number.trim(),
+          loan_type: data.loan_type.trim(),
+          loan_id: data.loan_id.trim(),
+          Description: data.Description.trim(),
+          last_ssn_digits: data.last_ssn_digits.trim(),
+        }
+        results.push({ ...newData, owner: _id })
       })
       .on("end", async () => {
         try {
           // console.log(results)
           // add csv file data to the database
+
           const loan = await Loan.insertMany(results)
           if (!loan) {
             console.error("Loan not added to the database.")
@@ -74,13 +84,13 @@ router.post("/loans", auth, upload.single("loan"), async (req, res) => {
 
     res.status(201).send()
   } catch (err) {
-    if (err.name === "ValidationError") {
-      return res.status(400).json({
-        error:
-          "The file field does not match the required format or contains missing values.",
-      })
-    }
-    res.status(400).send({ error: err.message })
+    // if (err.name === "ValidationError") {
+    //   return res.status(400).json({
+    //     error:
+    //       "The file field does not match the required format or contains missing values.",
+    //   })
+    // }
+    res.status(400).send({ error: err })
   }
 })
 

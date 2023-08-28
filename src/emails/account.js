@@ -27,20 +27,22 @@ const sendConfirmationEmail = (email, name) => {
       },
       subject: "Confirmation of Online Form Submission!",
       htmlContent: `
+      Dear <strong>${name}</strong>,
+      <br />
+      Your application for Skip-A-Pay has been approved*.
+      <br />
+      <br />
+      <h3>Loan Details</h3>
+
+      <br />
+      <br />
+
       <div align="center">
         <img
           src="https://www.cpdfcu.com/wp-content/uploads/2023/08/2Logos.png"
           alt="Logo"
         />
       </div>
-      <br />
-      Hi <strong>${name}</strong>,
-      <br />
-      <br />
-      Thank you for submittion of your form with us. We will be in touch shortly regarding your request.
-      <br />
-      <br />
-      <strong>Best regards</strong>
       `,
     }
     sendEmail()
