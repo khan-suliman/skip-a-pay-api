@@ -9,6 +9,9 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions:api",
     "logs": "firebase functions:log",
+    "env-add": "firebase functions:config:set",
+    "env-remove": "firebase functions:config:unset",
+    "env-get": "firebase functions:config:get",
     "dev": "env-cmd -f ./config/dev.env nodemon src/dev.js"
   },
   "keywords": [],
@@ -26,6 +29,7 @@
     "moment": "^2.29.4",
     "mongoose": "^7.2.3",
     "multer": "^1.4.5-lts.1",
+    "sib-api-v3-sdk": "^8.5.0",
     "validator": "^13.9.0"
   },
   "devDependencies": {
