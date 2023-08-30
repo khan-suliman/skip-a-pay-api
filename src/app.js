@@ -8,6 +8,7 @@ const loanRouter = require("./routers/loan")
 const app = express()
 
 app.use(cors("*"))
+
 app.use(express.json()) // parse the incoming requests with JSON payloads and is based upon the bodyparser
 app.use(adminRouter)
 app.use(userRouter)

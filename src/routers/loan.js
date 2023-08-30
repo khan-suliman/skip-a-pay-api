@@ -3,7 +3,6 @@ const Loan = require("../models/loan")
 const auth = require("../middleware/auth")
 const multer = require("multer")
 const csv = require("csv-parser")
-const fs = require("fs")
 const { PassThrough } = require("stream")
 
 const router = new express.Router()
@@ -66,6 +65,7 @@ const readCSVFile = async (file, _id) => {
       })
   })
 }
+
 // upload loan csv
 router.post("/loans", auth, upload.single("loan"), async (req, res) => {
   // const csvFile = req.file.buffer
@@ -93,6 +93,8 @@ router.post("/loans", auth, upload.single("loan"), async (req, res) => {
     res.status(400).send({ error: err })
   }
 })
+
+/////////////////////////////////////////////////////////////
 
 // const upload = multer({
 //   dest: "uploads",
