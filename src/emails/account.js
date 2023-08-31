@@ -74,6 +74,7 @@ const sendConfirmationEmail = async (name, email, user) => {
         <img
           src="https://www.cpdfcu.com/wp-content/uploads/2023/08/2Logos.png"
           alt="Logo"
+          style="max-width: 100%;"
         />
       </div>
       `,
