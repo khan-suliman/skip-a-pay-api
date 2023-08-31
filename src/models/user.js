@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    website: {
+      type: String,
+      trim: true,
+    },
     loan: [
       {
         type: mongoose.Schema.Types.ObjectId,
