@@ -1,7 +1,7 @@
 const SibApiV3Sdk = require("sib-api-v3-sdk")
-const env = require("../config/env")
+// const env = require("../config/env")
 
-const sendinblueAPIKey = env.BREVO_API_KEY
+const sendinblueAPIKey = process.env.BREVO_API_KEY
 
 const defaultClient = SibApiV3Sdk.ApiClient.instance
 

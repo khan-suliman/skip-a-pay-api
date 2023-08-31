@@ -1,4 +1,4 @@
 const mongoose = require("mongoose")
-const env = require("../config/env")
+// const env = require("../config/env")
 
-mongoose.connect(env.MONGODB_URL)
+mongoose.connect(process.env.MONGODB_URL)

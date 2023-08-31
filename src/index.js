@@ -1,7 +1,7 @@
 const app = require("./app")
-const env = require("./config/env")
+// const env = require("./config/env")
 
-const port = env.PORT
+const port = process.env.PORT
 
 // listen to port
 app.listen(port, () => {

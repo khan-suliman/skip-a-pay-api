@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const validator = require("validator")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-const env = require("../config/env")
+// const env = require("../config/env")
 
 const adminSchema = new mongoose.Schema(
   {
@@ -62,7 +62,7 @@ adminSchema.methods.toJSON = function () {
 // generate auth token for user
 adminSchema.methods.generateAuthToken = async function () {
   const admin = this
-  const token = jwt.sign({ _id: admin._id.toString() }, env.JWT_SECRET)
+  const token = jwt.sign({ _id: admin._id.toString() }, process.env.JWT_SECRET)
 
   admin.tokens = admin.tokens.concat({ token })
   await admin.save()
