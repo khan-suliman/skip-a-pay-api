@@ -8,8 +8,5 @@ app.listen(port, () => {
   console.log("Server is up on port " + port)
 })
 
-// api function - for firebase
-// exports.api = functions.https.onRequest(app)
-
 // Export the Express API - for vercel
 // module.exports = app
