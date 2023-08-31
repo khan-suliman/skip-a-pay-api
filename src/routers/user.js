@@ -28,7 +28,7 @@ router.post("/users", async (req, res) => {
     const user = new User(req.body)
     await user.save()
 
-    sendConfirmationEmail(req.body.email, req.body.firstName)
+    sendConfirmationEmail(user.firstName, user.email, user)
 
     res.status(201).send(user)
   } catch (e) {
