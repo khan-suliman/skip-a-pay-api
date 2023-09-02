@@ -17,22 +17,35 @@ const populateUser = async (user) => {
   return user.loan
 }
 
+const getLoanDetails = (loans) => {
+  let loanDetails = ""
+  loans.forEach((loan) => {
+    loanDetails += `
+    <tr>
+      <td style="border: 1px solid #000000; padding: 5px;">
+        Loan: ${loan.loan_id} <br />
+        Loan Description: ${loan.Description}
+      </td>
+    </tr>
+    `
+  })
+
+  return `
+  <hr />
+    <table>
+      ${loanDetails}
+    </table>
+  <hr />
+  `
+}
+
 // send email when user submitted the form
 const sendConfirmationEmail = async (name, email, user) => {
   let loans = await populateUser(user)
-  let loan_ids = ""
-  let loan_types = ""
   // console.log("loans", loans)
 
-  for (let i = 0; i < loans.length; i++) {
-    if (i == 0) {
-      loan_ids = loans[i].loan_id
-      loan_types = loans[i].loan_type
-    } else {
-      loan_ids += loan_ids + ", " + loans[i].loan_id
-      loan_types += loan_types + ", " + loans[i].loan_type
-    }
-  }
+  const loanDetails = getLoanDetails(loans)
+  // console.log(loanDetails)
 
   try {
     sendSmtpEmail = {
@@ -54,15 +67,9 @@ const sendConfirmationEmail = async (name, email, user) => {
       <br />
       <br />
       <h3>Loan Details</h3>
+        ${loanDetails}
       <br />
-      Loan: ${loan_ids}
-      <br />
-      Loan Description: ${loan_types}
-      <br />
-      <br />
-
-      Chicago Patrolmen's Federal Credit Union- Happy to Serve You. 
-
+        Chicago Patrolmen's Federal Credit Union- Happy to Serve You. 
       <br />
       <br />
       <strong>
