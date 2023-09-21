@@ -10,19 +10,19 @@ router.get("/", async (req, res) => {
 })
 
 // create admin
-router.post("/admins", async (req, res) => {
-  const admin = new Admin(req.body)
+// router.post("/admins", async (req, res) => {
+//   const admin = new Admin(req.body)
 
-  try {
-    await admin.save()
+//   try {
+//     await admin.save()
 
-    const token = await admin.generateAuthToken()
+//     const token = await admin.generateAuthToken()
 
-    res.status(201).send({ admin, token })
-  } catch (e) {
-    res.status(400).send(e)
-  }
-})
+//     res.status(201).send({ admin, token })
+//   } catch (e) {
+//     res.status(400).send(e)
+//   }
+// })
 
 // login admin
 router.post("/admins/login", async (req, res) => {
