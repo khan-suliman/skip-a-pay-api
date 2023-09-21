@@ -63,7 +63,7 @@ const sendConfirmationEmail = async (name, email, user) => {
       htmlContent: `
       Dear <strong>${name}</strong>,
       <br />
-      Your application for Skip-A-Pay has been approved*.
+      <pre>  Your application for Skip-A-Pay has been approved*.</pre>
       <br />
       <br />
       <h3>Loan Details</h3>
