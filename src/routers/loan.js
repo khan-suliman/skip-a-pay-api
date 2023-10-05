@@ -35,15 +35,19 @@ const readCSVFile = async (file, _id) => {
       .pipe(csv())
       .on("data", (data) => {
         // console.log(data)
-        const newData = {
-          name: data.name.trim(),
-          account_number: data.account_number.trim(),
-          loan_type: data.loan_type.trim(),
-          loan_id: data.loan_id.trim(),
-          Description: data.Description.trim(),
-          last_ssn_digits: data.last_ssn_digits.trim(),
+        try {
+          const newData = {
+            name: data.name.trim(),
+            account_number: data.account_number.trim(),
+            loan_type: data.loan_type.trim(),
+            loan_id: data.loan_id.trim(),
+            Description: data.Description.trim(),
+            last_ssn_digits: data.last_ssn_digits.trim(),
+          }
+          results.push({ ...newData, owner: _id })
+        } catch (error) {
+          reject(error)
         }
-        results.push({ ...newData, owner: _id })
       })
       .on("end", async () => {
         try {
