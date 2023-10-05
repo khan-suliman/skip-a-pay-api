@@ -35,6 +35,17 @@ const readCSVFile = async (file, _id) => {
       .pipe(csv())
       .on("data", (data) => {
         // console.log(data)
+        if (
+          !data.name ||
+          !data.account_number ||
+          !data.loan_type ||
+          !data.loan_id ||
+          !data.Description ||
+          !data.last_ssn_digits
+        ) {
+          reject("Invalid Data, Loan not added to the database.")
+        }
+
         try {
           const newData = {
             name: data.name.trim(),
