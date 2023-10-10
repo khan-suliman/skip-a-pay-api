@@ -25,6 +25,10 @@ router.post("/users", async (req, res) => {
       throw new Error("Already Applied.")
     }
 
+    if (req.body.loan.length < 1) {
+      throw new Error("Please select any loan to apply!")
+    }
+
     const user = new User(req.body)
     await user.save()
 
