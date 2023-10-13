@@ -118,9 +118,12 @@ router.get("/users", auth, async (req, res) => {
   const countDocs = await User.countDocuments({})
   const daysCount = await User.countDocuments(query)
 
+  const sort = { createdAt: -1 } // Sort by createdAt field in descending order (newest first)
+
   const users = await User.find(query)
     .limit(pageLimit)
     .skip(pageSkip)
+    .sort(sort)
     .populate("loan")
 
   if (!users) {
