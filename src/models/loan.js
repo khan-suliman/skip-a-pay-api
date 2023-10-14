@@ -8,16 +8,19 @@ const loanSchema = new mongoose.Schema(
       trim: true,
     },
     account_number: {
-      type: Number,
+      type: String,
       required: true,
+      trim: true,
     },
     loan_type: {
-      type: Number,
+      type: String,
       required: true,
+      trim: true,
     },
     loan_id: {
-      type: Number,
+      type: String,
       required: true,
+      trim: true,
     },
     Description: {
       type: String,
@@ -25,8 +28,9 @@ const loanSchema = new mongoose.Schema(
       trim: true,
     },
     last_ssn_digits: {
-      type: Number,
+      type: String,
       required: true,
+      trim: true,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -38,6 +42,32 @@ const loanSchema = new mongoose.Schema(
     timestamps: true,
   }
 )
+
+// get all loans
+const getAllLoans = async (loans) => {
+  let loanData = []
+  return new Promise((resolve, reject) => {
+    loans.forEach(async (loanID, idx) => {
+      const loan = await Loan.findById({ _id: loanID })
+
+      loanData.push(loan)
+
+      // return after last data
+      if (idx == loans.length - 1) {
+        resolve(loanData)
+      }
+    })
+  })
+} // getAllLoans
+
+// extract loan data by id and add to user data
+loanSchema.statics.populateLoan = async (loan) => {
+  let loanData = await getAllLoans(loan)
+
+  // user.loan = loanData
+
+  return loanData
+} // populateLoan
 
 const Loan = mongoose.model("Loan", loanSchema)
 

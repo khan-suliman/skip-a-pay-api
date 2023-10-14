@@ -21,35 +21,20 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     accountNumber: {
-      type: Number,
+      type: String,
       required: true,
-      default: 0,
-      validate(value) {
-        if (value < 0) {
-          throw new Error("invalid account number!")
-        }
-      },
+      trim: true,
     },
     ssnNumber: {
       // last 4 digits of ssn
-      type: Number,
+      type: String,
       required: true,
-      default: 0,
-      validate(value) {
-        if (value < 0) {
-          throw new Error("invalid ssn number!")
-        }
-      },
+      trim: true,
     },
     phoneNumber: {
-      type: Number,
+      type: String,
       required: true,
-      default: 0,
-      validate(value) {
-        if (value < 0) {
-          throw new Error("invalid phone number!")
-        }
-      },
+      trim: true,
     },
     email: {
       type: String,
@@ -68,9 +53,21 @@ const userSchema = new mongoose.Schema(
     },
     loan: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Loan",
+        loan_type: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        loan_id: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        Description: {
+          type: String,
+          required: true,
+          trim: true,
+        },
       },
     ],
   },
@@ -134,9 +131,9 @@ userSchema.statics.makeCsv = async (days) => {
   // format data for CSV downloadable file
   const csvJsonData = users.map(({ _id, loan, email, createdAt }) => ({
     ID: _id,
-    Name: loan[0].name,
+    Name: loan[0]?.name,
     Email: email,
-    "Account Number": loan[0].account_number,
+    "Account Number": loan[0]?.account_number,
     // "Loan ID": loan.loan_id,
     "Loan ID": extractLoans(loan),
     // "Last SSN Digits": loan.last_ssn_digits,
@@ -148,9 +145,9 @@ userSchema.statics.makeCsv = async (days) => {
     let allLoans = ""
     for (let i = 0; i < loans.length; i++) {
       if (i == 0) {
-        allLoans = loans[i].loan_id
+        allLoans = loans[i]?.loan_id
       } else {
-        allLoans = `${allLoans}, ${loans[i].loan_id}`
+        allLoans = `${allLoans}, ${loans[i]?.loan_id}`
       }
     }
     // loans.forEach((loan) => {

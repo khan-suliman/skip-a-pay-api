@@ -2,6 +2,7 @@ const express = require("express")
 const User = require("../models/user")
 const auth = require("../middleware/auth")
 const { sendConfirmationEmail } = require("../emails/account")
+const Loan = require("../models/loan")
 
 const router = new express.Router()
 
@@ -29,7 +30,12 @@ router.post("/users", async (req, res) => {
       throw new Error("Please select any loan to apply!")
     }
 
+    // populate loan, and add it to user data
+    const loanData = await Loan.populateLoan(req.body.loan)
+    req.body.loan = loanData
+
     const user = new User(req.body)
+    // const user = new User(userData)
     await user.save()
 
     sendConfirmationEmail(user.firstName, user.email, user)
@@ -50,8 +56,12 @@ router.patch("/users", async (req, res) => {
       ssnNumber: req.body.ssnNumber,
     })
 
+    // populate loan, and add it to user data
+    const loanData = await Loan.populateLoan(req.body.loan)
+
     // update loan only
-    user.loan = req.body.loan
+    // user.loan = req.body.loan
+    user.loan = loanData
     await user.save()
     res.status(201).send(user)
   } catch (e) {
@@ -124,7 +134,7 @@ router.get("/users", auth, async (req, res) => {
     .limit(pageLimit)
     .skip(pageSkip)
     .sort(sort)
-    .populate("loan")
+  // .populate("loan") // FIXME: no need to populate loan any more
 
   if (!users) {
     return res.status(404).send()
