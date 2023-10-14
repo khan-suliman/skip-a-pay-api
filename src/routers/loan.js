@@ -12,13 +12,14 @@ const upload = multer({
   limits: {
     fileSize: 5 * 1024 * 1024,
   },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(csv|xlsx)$/)) {
-      return cb(new Error("please upload a csv."))
-    }
+  // Accept CSV files only
+  // fileFilter(req, file, cb) {
+  //   if (!file.originalname.match(/\.(csv|xlsx)$/)) {
+  //     return cb(new Error("please upload a csv."))
+  //   }
 
-    cb(undefined, true)
-  },
+  //   cb(undefined, true)
+  // },
 })
 
 // read CSV file without saving file in server
