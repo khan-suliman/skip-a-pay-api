@@ -178,4 +178,30 @@ router.delete("/users", auth, async (req, res) => {
   }
 })
 
+// update all loans automatically
+router.patch("/users/update", auth, async (req, res) => {
+  try {
+    let user = await User.findOne({
+      accountNumber: req.body.accountNumber,
+    })
+
+    // console.log(user)
+
+    let loans = await Loan.find({
+      account_number: user.accountNumber,
+      last_ssn_digits: user.ssnNumber,
+    })
+
+    // console.log(loans)
+
+    if (!user.loan || !user.loan[0]?.loan_id) {
+      user.loan = loans
+      await user.save()
+    }
+    res.send({ user, loans })
+  } catch (error) {
+    return res.send(error)
+  }
+})
+
 module.exports = router
