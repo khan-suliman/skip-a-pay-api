@@ -122,23 +122,35 @@ userSchema.statics.getLoanDetails = async (currentUser) => {
 userSchema.statics.makeCsv = async (days) => {
   let query = User.filterByDays(days)
 
-  const users = await User.find(query).populate("loan")
+  const users = await User.find(query)
+  // .populate("loan") // no need to populate loan
 
   if (!users) {
     throw new Error("Users not found.")
   }
 
   // format data for CSV downloadable file
-  const csvJsonData = users.map(({ _id, loan, email, createdAt }) => ({
-    ID: _id,
-    Name: loan[0]?.name,
-    Email: email,
-    "Account Number": loan[0]?.account_number,
-    // "Loan ID": loan.loan_id,
-    "Loan ID": extractLoans(loan),
-    // "Last SSN Digits": loan.last_ssn_digits,
-    "Submitted Date": moment(createdAt).format("MMMM Do, YYYY, h:mm a"),
-  }))
+  const csvJsonData = users.map(
+    ({
+      _id,
+      firstName,
+      middleName,
+      lastName,
+      accountNumber,
+      loan,
+      email,
+      createdAt,
+    }) => ({
+      ID: _id,
+      Name: `${firstName} ${middleName ? middleName : ""} ${lastName}`,
+      Email: email,
+      "Account Number": accountNumber,
+      // "Loan ID": loan.loan_id,
+      "Loan ID": extractLoans(loan),
+      // "Last SSN Digits": loan.last_ssn_digits,
+      "Submitted Date": moment(createdAt).format("MMMM Do, YYYY, h:mm a"),
+    })
+  )
 
   // get all loans of a user
   function extractLoans(loans) {
