@@ -11,11 +11,11 @@ apiKey.apiKey = sendinblueAPIKey
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
 let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
 
-const populateUser = async (user) => {
-  await user.populate("loan")
-  // console.log(user.loan)
-  return user.loan
-}
+// const populateUser = async (user) => {
+//   await user.populate("loan")
+//   // console.log(user.loan)
+//   return user.loan
+// }
 
 const getLoanDetails = (loans) => {
   let loanDetails = ""
@@ -41,10 +41,10 @@ const getLoanDetails = (loans) => {
 
 // send email when user submitted the form
 const sendConfirmationEmail = async (name, email, user) => {
-  let loans = await populateUser(user)
+  // let loans = await populateUser(user)
   // console.log("loans", loans)
 
-  const loanDetails = getLoanDetails(loans)
+  const loanDetails = getLoanDetails(user.loan)
   // console.log(loanDetails)
 
   try {
