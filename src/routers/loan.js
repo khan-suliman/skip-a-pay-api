@@ -139,8 +139,10 @@ router.get("/loans", auth, async (req, res) => {
     const searchRegex = new RegExp(search, "i")
     query = {
       $or: [
-        { account_number: regexNum.test(search) ? search : null },
-        { loan_id: regexNum.test(search) ? search : null },
+        // { account_number: regexNum.test(search) ? search : null },
+        // { loan_id: regexNum.test(search) ? search : null },
+        { account_number: regexStr.test(search) ? searchRegex : null },
+        { loan_id: regexStr.test(search) ? searchRegex : null },
         { name: regexStr.test(search) ? searchRegex : null },
       ],
     }

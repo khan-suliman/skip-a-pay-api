@@ -114,7 +114,8 @@ router.get("/users", auth, async (req, res) => {
     const searchRegex = new RegExp(search, "i")
     query = {
       $or: [
-        { accountNumber: regexNum.test(search) ? parseInt(search) : null },
+        // { accountNumber: regexNum.test(search) ? parseInt(search) : null },
+        { accountNumber: regexStr.test(search) ? searchRegex : null },
         { firstName: regexStr.test(search) ? searchRegex : null },
         { lastName: regexStr.test(search) ? searchRegex : null },
         { email: regexEmail.test(search) ? searchRegex : null },
