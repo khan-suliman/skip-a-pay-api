@@ -205,4 +205,53 @@ router.delete("/users", auth, async (req, res) => {
 //   }
 // })
 
+// update all ssn automatically - temp
+router.patch("/users/update-ssn", auth, async (req, res) => {
+  try {
+    // FIXME: update ssn for users
+    let users = await User.find({})
+
+    users.forEach((data) => {
+      const ssnLen = data.ssnNumber.length
+      if (ssnLen < 1) {
+        data.ssnNumber = "0000"
+        data.save()
+      } else if (ssnLen < 2) {
+        data.ssnNumber = "000" + data.ssnNumber
+        data.save()
+      } else if (ssnLen < 3) {
+        data.ssnNumber = "00" + data.ssnNumber
+        data.save()
+      } else if (ssnLen < 4) {
+        data.ssnNumber = "0" + data.ssnNumber
+        data.save()
+      }
+    })
+
+    // FIXME: update ssn for loans
+    let loans = await Loan.find({})
+
+    loans.forEach((data) => {
+      const ssnLen = data.last_ssn_digits.length
+      if (ssnLen < 1) {
+        data.last_ssn_digits = "0000"
+        data.save()
+      } else if (ssnLen < 2) {
+        data.last_ssn_digits = "000" + data.last_ssn_digits
+        data.save()
+      } else if (ssnLen < 3) {
+        data.last_ssn_digits = "00" + data.last_ssn_digits
+        data.save()
+      } else if (ssnLen < 4) {
+        data.last_ssn_digits = "0" + data.last_ssn_digits
+        data.save()
+      }
+    })
+
+    res.send({ msg: "ssn updated successfully!" })
+  } catch (error) {
+    return res.send(error)
+  }
+})
+
 module.exports = router
