@@ -142,7 +142,7 @@ userSchema.statics.makeCsv = async (days) => {
       createdAt,
     }) => ({
       ID: _id,
-      Name: `${firstName} ${middleName ? middleName : ""} ${lastName}`,
+      Name: `${firstName} ${middleName ? middleName + " " : ""}${lastName}`,
       Email: email,
       "Account Number": accountNumber,
       // "Loan ID": loan.loan_id,
