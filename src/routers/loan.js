@@ -133,7 +133,7 @@ router.get("/loans", auth, async (req, res) => {
   if (search) {
     // Search for documents where field is equal to (number) or (string) or any other type or field
     const regexNum = /^[1-9]\d*$/
-    const regexStr = /^[A-Za-z\s]+$/
+    const regexStr = /^[A-Za-z0-9\s]+$/
 
     // Create a regular expression with the 'i' flag for case-insensitive search
     const searchRegex = new RegExp(search, "i")
