@@ -73,7 +73,7 @@ router.patch("/users", async (req, res) => {
 router.get("/users", auth, async (req, res) => {
   let days = req.query.days
   let count = req.query.count
-  let search = req.query.search.trim() // remove spaces from start and end of search
+  let search = req.query.search
 
   // const regexNums = /^[1-9]\d*$/
   // console.log(regexNums.test(search) ? "its number" : "its not a number")
@@ -107,7 +107,7 @@ router.get("/users", auth, async (req, res) => {
   if (search) {
     // Search for documents where field is equal to (number) or (string) or any other type or field
     const regexNum = /^[1-9]\d*$/
-    const regexStr = /^[A-Za-z0-9@.\s]+$/
+    const regexStr = /^[A-Za-z0-9\s@.]+$/
     const regexEmail = /^[\w.-]+@[a-zA-Z0-9\d.-]+\.[a-zA-Z]{2,}$/
 
     // Create a regular expression with the 'i' flag for case-insensitive search
