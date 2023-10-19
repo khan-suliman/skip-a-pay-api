@@ -121,7 +121,7 @@ router.get("/loans", auth, async (req, res) => {
 
   const pageLimit = req.query.limit // Number of documents per page
   const pageNumber = req.query.skip // Current page number
-  let search = req.query.search
+  let search = req.query.search.trim()
   let pageSkip = 0
 
   if (pageNumber > 0 && pageLimit > 0) {
