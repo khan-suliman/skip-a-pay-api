@@ -56,6 +56,19 @@ const readCSVFile = async (file, _id) => {
             Description: data.Description.trim(),
             last_ssn_digits: data.last_ssn_digits.trim(),
           }
+
+          // check if ssn length is less than 4 then replace it with zero for each missing length eg: 345 -> 0345
+          const ssnLen = newData.last_ssn_digits.length
+          if (ssnLen < 1) {
+            newData.last_ssn_digits = "0000"
+          } else if (ssnLen < 2) {
+            newData.last_ssn_digits = "000" + newData.last_ssn_digits
+          } else if (ssnLen < 3) {
+            newData.last_ssn_digits = "00" + newData.last_ssn_digits
+          } else if (ssnLen < 4) {
+            newData.last_ssn_digits = "0" + newData.last_ssn_digits
+          }
+
           results.push({ ...newData, owner: _id })
         } catch (error) {
           reject(error)
