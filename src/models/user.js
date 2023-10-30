@@ -95,27 +95,44 @@ userSchema.statics.filterByDays = (days) => {
 
 // get loan details for user
 userSchema.statics.getLoanDetails = async (currentUser) => {
-  const loan = await Loan.find({
+  let availableLoans = []
+
+  const loans = await Loan.find({
     account_number: currentUser.accountNumber,
     last_ssn_digits: currentUser.ssnNumber,
   })
-
-  if (!loan || !loan.length) {
-    throw new Error("Loan not available, please try again later.")
-  }
 
   let user = await User.findOne({
     accountNumber: currentUser.accountNumber,
     ssnNumber: currentUser.ssnNumber,
   })
 
-  // populate and return
-  if (user) {
-    await user.populate("loan")
-    return user
+  // loan and user both not available
+  if ((!loans || !loans.length) && !user) {
+    throw new Error("Loan not available, please try again later.")
   }
 
-  return loan
+  // populate and return
+  if (user) {
+    availableLoans = removeItemsBasedOnId(loans, user.loan)
+
+    return {
+      user,
+      availableLoans,
+    }
+  }
+
+  return {
+    user: "Please Apply for loan!",
+    availableLoans: loans,
+  }
+}
+
+// remove common element based on loan_id and retrun new arr
+function removeItemsBasedOnId(arr1, arr2) {
+  return arr1.filter(
+    (item1) => !arr2.some((item2) => item1.loan_id === item2.loan_id)
+  )
 }
 
 // make csv file and return

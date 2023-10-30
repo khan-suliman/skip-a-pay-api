@@ -9,8 +9,8 @@ const router = new express.Router()
 // get loan details
 router.post("/users/loan", async (req, res) => {
   try {
-    const user = await User.getLoanDetails(req.body)
-    res.status(200).send(user)
+    const { user, availableLoans } = await User.getLoanDetails(req.body)
+    res.status(200).send({ user, availableLoans })
   } catch (e) {
     // res.status(400).send(e)
     res.status(404).send({ error: e.message })
@@ -20,9 +20,9 @@ router.post("/users/loan", async (req, res) => {
 // create loan
 router.post("/users", async (req, res) => {
   try {
-    const loan = await User.getLoanDetails(req.body)
+    const { user } = await User.getLoanDetails(req.body)
 
-    if (loan.loan) {
+    if (user.loan) {
       throw new Error("Already Applied.")
     }
 
@@ -34,13 +34,13 @@ router.post("/users", async (req, res) => {
     const loanData = await Loan.populateLoan(req.body.loan)
     req.body.loan = loanData
 
-    const user = new User(req.body)
+    const newUser = new User(req.body)
     // const user = new User(userData)
-    await user.save()
+    await newUser.save()
 
-    sendConfirmationEmail(user.firstName, user.email, user)
+    sendConfirmationEmail(newUser.firstName, newUser.email, newUser)
 
-    res.status(201).send(user)
+    res.status(201).send(newUser)
   } catch (e) {
     res.status(400).send({ error: e.message })
   }
@@ -61,7 +61,11 @@ router.patch("/users", async (req, res) => {
 
     // update loan only
     // user.loan = req.body.loan
-    user.loan = loanData
+    loanData.forEach((newLoan) => {
+      user.loan.push(newLoan)
+    })
+
+    // user.loan = loanData
     await user.save()
     res.status(201).send(user)
   } catch (e) {
