@@ -67,6 +67,9 @@ router.patch("/users", async (req, res) => {
 
     // user.loan = loanData
     await user.save()
+
+    sendConfirmationEmail(user.firstName, user.email, user)
+
     res.status(201).send(user)
   } catch (e) {
     res.status(400).send({ error: e.message })
